@@ -1,0 +1,57 @@
+import random
+
+from PIL import Image
+import os
+src = '/Users/nastya/Documents/2021-2022/diplom/hiragana/images/туц'
+dir = os.listdir(src)
+
+
+import cv2
+import numpy as np
+
+def crop_center2(pil_img, crop_width: int, crop_height: int) -> Image:
+    img_width, img_height = pil_img.size
+    return pil_img.crop(((img_width - crop_width) // 2.5,
+                         (img_height - crop_height) // 2.5,
+                         (img_width + crop_width) // 2.5,
+                         (img_height + crop_height) // 2.5))
+
+def crop_center(pil_img, crop_width: int, crop_height: int, d) -> Image:
+    img_width, img_height = pil_img.size
+    return pil_img.crop(((img_width - crop_width) // d,
+                         (img_height - crop_height) // d,
+                         (img_width + crop_width) // d,
+                         (img_height + crop_height) // d))
+
+
+for i in dir:
+    if i != '.DS_Store' and i != 'new'  and i != 'nv':
+        img = Image.open(src+'/'+i)
+        for j in range(1, 20):
+            rotate_img = img.rotate(j)
+            rotate_img.save(src+ '/' + i[:5]+ str(j) + '.jpeg', quality=95)
+
+            for y in range(5):
+                d = round(random.random() + 1, 2)
+                im_new = crop_center(rotate_img, 100, 100, d)
+                im_new.save(src + '/' + i[:5]+ str(j) + str(y) + '_new_size' + '.jpeg', quality=95)
+
+            im_new = crop_center2(rotate_img, 100, 100)
+            im_new.save(src + '/' + i[:5]+ str(j) + '_new_size2' + '.jpeg', quality=95)
+
+        for j in range(300, 360):
+            rotate_img = img.rotate(j)
+            rotate_img.save(src+ '/' + i[:5]+ str(j) +'j'+ '.jpeg', quality=95)
+
+            for y in range(5):
+                d = round(random.random() + 1, 2)
+                im_new = crop_center(rotate_img, 100, 100, d)
+                im_new.save(src + '/' + i[:5]+ str(j) + 'j'+ '_new_size' + '.jpeg', quality=95)
+
+            im_new = crop_center2(rotate_img, 100, 100)
+            im_new.save(src + '/' + i[:5]+ str(j) + 'j'+ '_new_size2' + '.jpeg', quality=95)
+
+        im_new = crop_center(img, 100, 100, 1.5)
+        im_new.save(src+ '/' + i[:5]+'_new_size'+ '.jpeg', quality=95)
+        im_new = crop_center2(img, 100, 100)
+        im_new.save(src + '/' + i[:5] + '_new_size2' + '.jpeg', quality=95)
