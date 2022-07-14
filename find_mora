@@ -1,10 +1,33 @@
+from PIL import Image
+import os, glob, shutil
 import cv2
 import numpy as np
+import os
+# Force CPU
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# Debug messages
+# 0 = all messages are logged (default behavior)
+# 1 = INFO messages are not printed
+# 2 = INFO and WARNING messages are not printed
+# 3 = INFO, WARNING, and ERROR messages are not printed
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import cv2
+import imghdr
+import pathlib
+from tensorflow import keras
+from scipy import io as spio
+from matplotlib import pyplot as plt
+from typing import *
+import time
 
-image_file = ''
+from PIL import Image
+image_file = "/Users/nastya/Desktop/Tastt/IMG_5019.PNG"
+
+im = Image.open(image_file)
+
 img = cv2.imread(image_file)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)
+ret, thresh = cv2.threshold(gray, 115, 255, cv2.THRESH_BINARY)
 img_erode = cv2.erode(thresh, np.ones((3, 3), np.uint8), iterations=1)
 
 # Get contours
@@ -12,20 +35,27 @@ contours, hierarchy = cv2.findContours(img_erode, cv2.RETR_TREE, cv2.CHAIN_APPRO
 
 output = img.copy()
 
+reck = []
 for idx, contour in enumerate(contours):
     (x, y, w, h) = cv2.boundingRect(contour)
-    print("R", idx, x, y, w, h, cv2.contourArea(contour), hierarchy[0][idx])
+    # print("R", idx, x, y, w, h, cv2.contourArea(contour), hierarchy[0][idx])
     # hierarchy[i][0]: the index of the next contour of the same level
     # hierarchy[i][1]: the index of the previous contour of the same level
     # hierarchy[i][2]: the index of the first child
     # hierarchy[i][3]: the index of the parent
+
     if hierarchy[0][idx][3] == 0:
-        cv2.rectangle(output, (x, y), (x + w, y + h), (70, 0, 0), 1)
+        cv2.rectangle(output, (x, y), (x + w, y + h), (255, 255, 0), 3)
+        reck.append((x - 100, y - 150, x + w + 200, y + h +100))
+
+
+print(reck)
+#im_crop = im.crop(reck[0])
+#im_crop.save('/Users/nastya/Desktop/test/w3/guido_pillow_crop15.jpg', quality=95)
+
 
 
 cv2.imshow("Input", img)
 cv2.imshow("Enlarged", img_erode)
 cv2.imshow("Output", output)
-cv2.waitKey(1)
-if cv2.waitKey():
-    cv2.destroyAllWindows()
+cv2.waitKey(0)
