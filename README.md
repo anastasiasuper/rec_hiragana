@@ -3,4 +3,4 @@ This repository contains an example of the implementation of a convolutional neu
 library used - tensorflow,keras (code in hiragana file).
 create_data is a program that is designed to expand an existing dataset by rotating all images, measuring the scale, and also the background color. The main dataset was taken from Kaggle.com.
 knn_for_5_group - sklearn implementation of the K-means algorithm, for clustering a large number of classes.
-find_mora - implementation of an algorithm for finding the edge of an object in an image.
+find_mora - implementation of the algorithm to find the boundaries of the object in the image.
