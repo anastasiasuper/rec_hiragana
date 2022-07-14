@@ -1,0 +1,61 @@
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+import cv2
+import os, glob, shutil
+
+
+input_dir = '/Users/nastya/Documents/2021-2022/diplom/hiragana/images/knn_5'
+glob_dir = input_dir + '/*.jpeg'
+images = [cv2.resize(cv2.imread(file), (96, 96)) for file in glob.glob(glob_dir)]
+paths = [file for file in glob.glob(glob_dir)]
+images = np.array(np.float32(images).reshape(len(images), -1)/255)
+
+model = tf.keras.applications.MobileNetV2(include_top=False, weights='imagenet', input_shape = (96, 96, 3))
+predictions = model.predict(images.reshape(-1, 96, 96, 3))
+pred_images = predictions.reshape(images.shape[0], -1)
+
+k = 5
+kmodel = KMeans(n_clusters = k, random_state=728)
+kmodel.fit(pred_images)
+kpredictions = kmodel.predict(pred_images)
+
+#shutil.rmtree('output')
+"""for i in range(k):
+    os.makedirs('output\cluster' + str(i))"""
+ans = []
+#print(len(paths[0]))
+
+for i in range(len(paths)):
+    ans.append([paths[i][63:65], str(kpredictions[i])])
+    #print(paths[i], 'output\cluster”'+str(kpredictions[i]))
+    #shutil.copy2(paths[i], 'output\cluster”'+str(kpredictions[i]))
+print(ans)
+l1 = []
+l2 = []
+l3 = []
+l4 = []
+l0 = []
+for i in range(len(ans)):
+    if ans[i][1] == '1':
+        l1.append(ans[i][0])
+    elif ans[i][1] == '2':
+        l2.append(ans[i][0])
+    elif ans[i][1] == '3':
+        l3.append(ans[i][0])
+    elif ans[i][1] == '4':
+        l4.append(ans[i][0])
+    elif ans[i][1] == '0':
+        l0.append(ans[i][0])
+
+print(l1)
+print(l2)
+print(l3)
+print(l4)
+print(l0)
+
+
+
+
